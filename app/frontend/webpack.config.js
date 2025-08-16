@@ -22,5 +22,12 @@ module.exports = {
   devServer: {
     static: path.join(__dirname, 'public'),
     port: 3000,
+    proxy: [
+      {
+        context: ['/api'],
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+    ],
   },
 };
