@@ -1,0 +1,103 @@
+{
+"account_holder": "BHARATH CHEKURI",
+"joint_holder": "--",
+"address": "6-17 PADAMATI BAZAR NADENDLA,NADENDLA KANYAKA PARAMESWARI TEMPLE,GUNTUR,ANDHRA PRADESH-INDIA,522234",
+"customer_id": 862321299,
+"ifsc_code": "UTIB0000194",
+"micr_code": 560211008,
+"nominee_registered": true,
+
+"transaction_details": [
+	{
+		"tran_date": "01-08-2025",
+		"chq_no": "",
+		"particulars": "NEFT/HDFCH00395340671/CHEKURI BHARATH/HDFC BANK/0001Rent chitti",
+		"debit": "",
+		"credit": "68000.00",
+		"balance": "72496.67",
+		"init.br": 248
+	},
+	{
+		"tran_date": "01-08-2025",
+		"chq_no": "",
+		"particulars": "UPI/P2M/519763557884/RAGAM STORE/Paymen/YES BANK LIMITED YBS",
+		"debit": "54.00",
+		"credit": "",
+		"balance": "72442.67",
+		"init.br": 194
+	},
+	{
+		"tran_date": "15-07-2025",
+		"chq_no": "123456",
+		"particulars": "ATM Withdrawal",
+		"debit": "5000.00",
+		"credit": "",
+		"balance": "65000.00",
+		"init.br": 248
+	},
+	{
+		"tran_date": "10-07-2025",
+		"chq_no": "",
+		"particulars": "Salary Credit",
+		"debit": "",
+		"credit": "75000.00",
+		"balance": "70000.00",
+		"init.br": 248
+	},
+	{
+		"tran_date": "05-07-2025",
+		"chq_no": "",
+		"particulars": "Online Shopping/Amazon",
+		"debit": "2500.00",
+		"credit": "",
+		"balance": "67500.00",
+		"init.br": 194
+	},
+	{
+		"tran_date": "25-06-2025",
+		"chq_no": "",
+		"particulars": "Electricity Bill Payment",
+		"debit": "1800.00",
+		"credit": "",
+		"balance": "65700.00",
+		"init.br": 194
+	},
+	{
+		"tran_date": "20-06-2025",
+		"chq_no": "",
+		"particulars": "Interest Credit",
+		"debit": "",
+		"credit": "1200.00",
+		"balance": "66900.00",
+		"init.br": 248
+	},
+	{
+		"tran_date": "15-06-2025",
+		"chq_no": "654321",
+		"particulars": "Cheque Deposit",
+		"debit": "",
+		"credit": "10000.00",
+		"balance": "76900.00",
+		"init.br": 248
+	},
+	{
+		"tran_date": "10-06-2025",
+		"chq_no": "",
+		"particulars": "Grocery Store",
+		"debit": "3200.00",
+		"credit": "",
+		"balance": "73700.00",
+		"init.br": 194
+	},
+	{
+		"tran_date": "05-06-2025",
+		"chq_no": "",
+		"particulars": "Mobile Recharge",
+		"debit": "399.00",
+		"credit": "",
+		"balance": "73301.00",
+		"init.br": 194
+	}
+]
+
+}

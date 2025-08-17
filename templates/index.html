@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spending Trends</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div class="container-fluid px-2 px-md-4">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+                <div class="container-fluid px-2 px-md-4">
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-lg-4 mb-4">
+                            <div class="card h-100">
+                                <h4 class="fw-bold mb-3" style="color:#1a2340;">Account Details</h4>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item"><strong>Account Holder:</strong> {{ account_holder }}</li>
+                                    <li class="list-group-item"><strong>Address:</strong> {{ address }}</li>
+                                    <li class="list-group-item"><strong>Customer ID:</strong> {{ customer_id }}</li>
+                                    <li class="list-group-item"><strong>IFSC Code:</strong> {{ ifsc_code }}</li>
+                                    <li class="list-group-item"><strong>MICR Code:</strong> {{ micr_code }}</li>
+                                    <li class="list-group-item"><strong>Nominee Registered:</strong> {{ 'Yes' if nominee_registered else 'No' }}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-8">
+                            <div class="card mb-4">
+                                <h3 class="mb-4 text-center fw-bold" style="color:#1a2340;">Monthly Spending Trends</h3>
+                                <form method="get" class="row g-3 align-items-end">
+                                    <div class="col-12 col-sm-6 col-md-3">
+                                        <label for="transaction_type" class="form-label">Transaction Type</label>
+                                        <select name="transaction_type" id="transaction_type" class="form-select">
+                                            <option value="">All</option>
+                                            <option value="credit" {% if transaction_type == 'credit' %}selected{% endif %}>Credit</option>
+                                            <option value="debit" {% if transaction_type == 'debit' %}selected{% endif %}>Debit</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-3">
+                                        <label for="particulars" class="form-label">Particulars</label>
+                                        <select name="particulars" id="particulars" class="form-select">
+                                            <option value="">All</option>
+                                            {% for p in particulars_list %}
+                                                <option value="{{p}}" {% if p == selected_particular %}selected{% endif %}>{{p}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-3">
+                                        <label for="from_date" class="form-label">From Date</label>
+                                        <input type="date" name="from_date" id="from_date" value="{{from_date_str}}" class="form-control">
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-3">
+                                        <label for="to_date" class="form-label">To Date</label>
+                                        <input type="date" name="to_date" id="to_date" value="{{to_date_str}}" class="form-control">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="card">
+                                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-2 gap-2">
+                                    <h5 class="fw-bold mb-0" style="color:#22305a;">Debits vs Credits</h5>
+                                    <select id="chartType" class="form-select chart-type-select w-auto">
+                                        <option value="bar">Bar</option>
+                                        <option value="line">Line</option>
+                                        <option value="pie">Pie</option>
+                                    </select>
+                                </div>
+                                <div id="chart" style="width:100%;min-height:400px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    });
+});
+function renderChart(type) {
+    var data, layout;
+    if (type === 'bar') {
+        data = [
+            {
+                x: months,
+                y: debits,
+                type: 'bar',
+                name: 'Debits',
+                marker: {color: '#e74c3c'},
+                text: debits.map(v => v.toLocaleString()),
+                textposition: 'auto',
+                hovertemplate: 'Month: %{x}<br>Debit: %{y}<extra></extra>'
+            },
+            {
+                x: months,
+                y: credits,
+                type: 'bar',
+                name: 'Credits',
+                marker: {color: '#27ae60'},
+                text: credits.map(v => v.toLocaleString()),
+                textposition: 'auto',
+                hovertemplate: 'Month: %{x}<br>Credit: %{y}<extra></extra>'
+            }
+        ];
+        layout = {
+            barmode: 'group',
+            title: '',
+            plot_bgcolor: '#f8fafc',
+            paper_bgcolor: '#f8fafc',
+            font: { family: 'Inter, Arial, sans-serif', size: 16, color: '#222' },
+            margin: { t: 30, l: 40, r: 20, b: 40 },
+            xaxis: { tickfont: { color: '#22305a' } },
+            yaxis: { tickfont: { color: '#1a2340' } },
+            autosize: true,
+        };
+    } else if (type === 'line') {
+        data = [
+            {
+                x: months,
+                y: debits,
+                type: 'scatter',
+                mode: 'lines+markers+text',
+                name: 'Debits',
+                line: {color: '#e74c3c', width: 3},
+                text: debits.map(v => v.toLocaleString()),
+                textposition: 'top center',
+                hovertemplate: 'Month: %{x}<br>Debit: %{y}<extra></extra>'
+            },
+            {
+                x: months,
+                y: credits,
+                type: 'scatter',
+                mode: 'lines+markers+text',
+                name: 'Credits',
+                line: {color: '#27ae60', width: 3},
+                text: credits.map(v => v.toLocaleString()),
+                textposition: 'top center',
+                hovertemplate: 'Month: %{x}<br>Credit: %{y}<extra></extra>'
+            }
+        ];
+        layout = {
+            title: '',
+            plot_bgcolor: '#f8fafc',
+            paper_bgcolor: '#f8fafc',
+            font: { family: 'Inter, Arial, sans-serif', size: 16, color: '#222' },
+            margin: { t: 30, l: 40, r: 20, b: 40 },
+            xaxis: { tickfont: { color: '#22305a' } },
+            yaxis: { tickfont: { color: '#1a2340' } },
+            autosize: true,
+        };
+    } else if (type === 'pie') {
+        data = [
+            {
+                labels: months,
+                values: debits,
+                type: 'pie',
+                name: 'Debits',
+                marker: {colors: months.map((_,i)=>i%2==0?'#e74c3c':'#f7b731')}, // Red/Yellow
+                domain: {row: 0, column: 0},
+                title: 'Debits',
+                text: debits.map(v => v.toLocaleString()),
+                textinfo: 'label+text+percent',
+                hovertemplate: 'Month: %{label}<br>Debit: %{value}<extra></extra>'
+            },
+            {
+                labels: months,
+                values: credits,
+                type: 'pie',
+                name: 'Credits',
+                marker: {colors: months.map((_,i)=>i%2==0?'#27ae60':'#2980b9')}, // Green/Blue
+                domain: {row: 0, column: 1},
+                title: 'Credits',
+                text: credits.map(v => v.toLocaleString()),
+                textinfo: 'label+text+percent',
+                hovertemplate: 'Month: %{label}<br>Credit: %{value}<extra></extra>'
+            }
+        ];
+        layout = {
+            grid: {rows: 1, columns: 2},
+            title: '',
+            autosize: true,
+            font: { family: 'Inter, Arial, sans-serif', size: 16, color: '#222' },
+            margin: { t: 30, l: 20, r: 20, b: 40 },
+            plot_bgcolor: '#f8fafc',
+            paper_bgcolor: '#f8fafc',
+        };
+    }
+    Plotly.newPlot('chart', data, layout, {responsive: true});
+}
+document.getElementById('chartType').addEventListener('change', function(e) {
+    renderChart(e.target.value);
+});
+window.addEventListener('resize', function() {
+    renderChart(document.getElementById('chartType').value);
+});
+renderChart('bar');
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
